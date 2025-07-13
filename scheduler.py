@@ -1,5 +1,9 @@
-from temporalio.client import Client
-from temporalio.schedules import Schedule, ScheduleSpec, ScheduleActionStartWorkflow
+from temporalio.client import (
+    Client,
+    Schedule,
+    ScheduleSpec,
+    ScheduleActionStartWorkflow,
+)
 from workflows.article_generation import ArticleGenWorkflow
 
 async def main():
