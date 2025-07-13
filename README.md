@@ -12,4 +12,4 @@
 
 - I think you can also mess around in the UI or through the CLI and it's easy enough
 
-- if you want to re-trigger it (because it failed and needs to be re-run), you can cancel it in the repo and then use `temporal schedule trigger --schedule-id daily-article-gen-workflow` (assuming that id is correct) in the CLI
+- if you want to re-trigger it (because it failed and needs to be re-run), you can terminate it in the UI and then use `temporal schedule trigger --schedule-id daily-article-gen-workflow` (assuming that id is correct) in the CLI
