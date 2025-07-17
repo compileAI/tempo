@@ -14,42 +14,42 @@ class ArticleGenWorkflow:
         await workflow.execute_activity(
             run_scrape,
             start_to_close_timeout=timedelta(hours=2),
-            retry=RetryPolicy(
+            retry_policy=RetryPolicy(
                 maximum_attempts=3,
             )
         )
         await workflow.execute_activity(
             run_scoop_preprocess,
             start_to_close_timeout=timedelta(hours=2),
-            retry=RetryPolicy(
+            retry_policy=RetryPolicy(
                 maximum_attempts=3,
             )
         )
         await workflow.execute_activity(
             run_scoop_clustering,
             start_to_close_timeout=timedelta(hours=2),
-            retry=RetryPolicy(
+            retry_policy=RetryPolicy(
                 maximum_attempts=3,
             )
         )
         await workflow.execute_activity(
             run_cluster,
             start_to_close_timeout=timedelta(hours=2),
-            retry=RetryPolicy(
+            retry_policy=RetryPolicy(
                 maximum_attempts=3,
             )
         )
         await workflow.execute_activity(
             run_faq_batch,
             start_to_close_timeout=timedelta(hours=2),
-            retry=RetryPolicy(
+            retry_policy=RetryPolicy(
                 maximum_attempts=3,
             )
         )
         await workflow.execute_activity(
             run_enhanced_articles,
             start_to_close_timeout=timedelta(hours=2),
-            retry=RetryPolicy(
+            retry_policy=RetryPolicy(
                 maximum_attempts=3,
             )
         )
