@@ -6,6 +6,7 @@ from .run_scoop_clustering import run_scoop_clustering
 from .run_cluster import run_cluster
 from .run_faq_batch import run_faq_batch
 from .run_enhanced_articles import run_enhanced_articles
+from .run_automations import run_automations
 
 __all__ = [
     'run_scrape',
@@ -16,4 +17,5 @@ __all__ = [
     'run_cluster',
     'run_faq_batch',
     'run_enhanced_articles',
+    'run_automations',
 ]

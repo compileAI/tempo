@@ -5,6 +5,7 @@ from activities import (
     run_scrape, run_dspy, run_vdb,
     run_scoop_preprocess, run_scoop_clustering,
     run_cluster, run_faq_batch, run_enhanced_articles,
+    run_automations,
 )
 
 @workflow.defn
@@ -34,6 +35,13 @@ class ArticleGenWorkflow:
         )
         await workflow.execute_activity(
             run_cluster,
+            start_to_close_timeout=timedelta(hours=2),
+            retry_policy=RetryPolicy(
+                maximum_attempts=3,
+            )
+        )
+        await workflow.execute_activity(
+            run_automations,
             start_to_close_timeout=timedelta(hours=2),
             retry_policy=RetryPolicy(
                 maximum_attempts=3,
