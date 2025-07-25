@@ -5,6 +5,7 @@ from activities import (
     run_scrape, run_dspy, run_vdb,
     run_scoop_preprocess, run_scoop_clustering,
     run_cluster, run_faq_batch, run_enhanced_articles,
+    run_automations, run_hlc
 )
 
 async def main():
@@ -17,6 +18,7 @@ async def main():
             run_scrape, run_dspy, run_vdb,
             run_scoop_preprocess, run_scoop_clustering,
             run_cluster, run_faq_batch, run_enhanced_articles,
+            run_automations, run_hlc,
         ],
     )
     await worker.run()
