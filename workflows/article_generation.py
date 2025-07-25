@@ -2,10 +2,9 @@ from datetime import timedelta
 from temporalio.common import RetryPolicy
 from temporalio import workflow
 from activities import (
-    run_scrape, run_dspy, run_vdb,
-    run_scoop_preprocess, run_scoop_clustering,
+    run_scrape, run_scoop_preprocess, run_scoop_clustering,
     run_cluster, run_faq_batch, run_enhanced_articles,
-    run_automations, run_hlc
+    run_automations, run_hlc, run_stagehand
 )
 
 @workflow.defn
@@ -14,6 +13,13 @@ class ArticleGenWorkflow:
     async def run(self) -> None:
         await workflow.execute_activity(
             run_scrape,
+            start_to_close_timeout=timedelta(hours=2),
+            retry_policy=RetryPolicy(
+                maximum_attempts=3,
+            )
+        )
+        await workflow.execute_activity(
+            run_stagehand,
             start_to_close_timeout=timedelta(hours=2),
             retry_policy=RetryPolicy(
                 maximum_attempts=3,
