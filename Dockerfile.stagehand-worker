@@ -18,4 +18,4 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . .
 
 ENV TEMPORAL_ADDRESS=temporal:7233
-CMD ["python3", "-m", "worker"]
+CMD ["python3", "-m", "stagehand_worker"]
