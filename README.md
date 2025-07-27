@@ -22,4 +22,4 @@ if you need to re-start the whole server, you have to run the `docker-compose.ym
 
 ## misc info
 
-stagehand uses playwright which launches a headless browser. this freaks out if you attempt to run as root. because of this, there's a service in `docker-compose.yml` called `article-worker` (I know... bad name lol). `article-worker` spins up a docker container that demotes itself and run the worker for stagehand (to make this all work). 
+stagehand uses playwright which launches a headless browser. this freaks out if you attempt to run as root. because of this, there's a service in `docker-compose.yml` called `stagehand-worker` that spins up a docker container that demotes itself and runs the worker for the stagehand workflow. 
