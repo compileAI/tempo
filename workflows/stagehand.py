@@ -1,5 +1,6 @@
 from datetime import timedelta
 from temporalio import workflow
+from temporalio.common import RetryPolicy
 
 from activities import run_stagehand
 
@@ -13,4 +14,7 @@ class StagehandWorkflow:
             run_stagehand,
             start_to_close_timeout=timedelta(minutes=30),
             task_queue="stagehand-tq",
+            retry_policy=RetryPolicy(
+                maximum_attempts=3,
+            ),
         )

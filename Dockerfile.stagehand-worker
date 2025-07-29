@@ -17,5 +17,6 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 # copy Tempo project code (scroopy_agent comes via bind‑mount)
 COPY . .
 
+ENV PYTHONUNBUFFERED=1
 ENV TEMPORAL_ADDRESS=temporal:7233
 CMD ["python3", "-m", "stagehand_worker"]
