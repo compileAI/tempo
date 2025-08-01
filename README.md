@@ -4,7 +4,7 @@
 
 *... because the code we run is in multiple repos, this needs to be a repo*
 
-note: we will be moving to compile-dev@100.87.99.101 instead of root
+note: we will be moving to `compile-dev@100.87.99.101` instead of root
 
 ## documentation
 
