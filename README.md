@@ -24,6 +24,8 @@ if you need to re-start temporal: `cd ~/docker-compose`, then `docker compose do
 
 ## misc info
 
+_this is now incorrect since we are moving to new user... will remove once it is confirmed to work_
+
 stagehand uses playwright which launches a headless browser. this freaks out if you attempt to run as root. because of this, there's a service in `docker-compose.yml` called `stagehand-worker` that spins up a docker container that demotes itself and runs the worker for the stagehand workflow. 
 
 if you want to view the stagehand logs, run `docker ps` to see all the containers, and locate the one related to stagehand, then run `docker logs <id>`
