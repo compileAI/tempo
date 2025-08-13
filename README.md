@@ -6,6 +6,8 @@
 
 note: we will be moving to `compile-dev@100.87.99.101` instead of root
 
+- currently stagehand and hf papers scraping is on compile-dev, the rest is on root
+
 ## documentation
 
 if you want to add a new activity to the workflow, you need to update the worker and schedule:
