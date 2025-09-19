@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/playwright:v1.44.1-jammy
+
+# install pip as root
+USER root
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends python3-pip \
+ && rm -rf /var/lib/apt/lists/*
+
+# switch to the non‑root user for Chromium sandbox safety
+USER pwuser
+WORKDIR /app
+
+# Python dependencies
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# copy Tempo project code (scroopy_agent comes via bind‑mount)
+COPY . .
+
+ENV PYTHONUNBUFFERED=1
+ENV TEMPORAL_ADDRESS=temporal:7233
+CMD ["python3", "-m", "stagehand_worker"]

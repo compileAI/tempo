@@ -8,6 +8,7 @@ from .run_faq_batch import run_faq_batch
 from .run_enhanced_articles import run_enhanced_articles
 from .run_automations import run_automations
 from .run_hlc import run_hlc
+from .run_stagehand import run_stagehand
 
 __all__ = [
     'run_scrape',
@@ -20,4 +21,5 @@ __all__ = [
     'run_enhanced_articles',
     'run_automations',
     'run_hlc',
+    'run_stagehand',
 ]

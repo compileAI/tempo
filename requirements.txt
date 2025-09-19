@@ -1,1 +1,10 @@
 temporalio
+
+# These are stagehand's fault
+stagehand>=0.1.0
+supabase>=2.3.0
+python-dotenv>=1.0.0
+dateparser>=1.2.0
+pydantic>=2.0.0
+aiofiles>=23.0.0
+pydantic[email]>=2.0.0
