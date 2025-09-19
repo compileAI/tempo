@@ -3,16 +3,16 @@ import os
 import time
 from temporalio import activity
 
-def get_simple_logger():
-    """Get a simple logger for activities that creates execution-specific log files."""
+def get_activity_logger(activity_name):
+    """Get a logger for a specific activity type that logs to its own file."""
     try:
-        # Get activity info
+        # Get activity info for run context
         activity_info = activity.info()
         workflow_run_id = activity_info.workflow_run_id
         workflow_id = activity_info.workflow_id
         
-        # Create unique logger per execution
-        logger_name = f"temporal_{workflow_run_id}"
+        # Create logger name based on activity
+        logger_name = f"activity_{activity_name}"
         logger = logging.getLogger(logger_name)
         
         # Set up logger if not already configured
@@ -22,34 +22,40 @@ def get_simple_logger():
             # Create logs directory
             os.makedirs("logs", exist_ok=True)
             
-            # Create log file with timestamp and run ID
-            timestamp = time.strftime('%Y%m%d_%H%M%S')
-            log_file = f"logs/{workflow_id}_{timestamp}_{workflow_run_id[:8]}.log"
+            # Create log file for this activity type
+            log_file = f"logs/{activity_name}.log"
             
-            # File handler
-            file_handler = logging.FileHandler(log_file)
+            # File handler that appends
+            file_handler = logging.FileHandler(log_file, mode='a')
             file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
             file_handler.setFormatter(file_formatter)
             logger.addHandler(file_handler)
             
             # Console handler
             console_handler = logging.StreamHandler()
-            console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            console_formatter = logging.Formatter(f'{activity_name} - %(asctime)s - %(levelname)s - %(message)s')
             console_handler.setFormatter(console_formatter)
             logger.addHandler(console_handler)
-            
-            logger.info(f"Logging initialized for execution {workflow_run_id[:8]} -> {log_file}")
+        
+        # Log execution separator with run info
+        separator = "-" * 80
+        timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+        logger.info(f"\n{separator}")
+        logger.info(f"NEW EXECUTION STARTED - {timestamp}")
+        logger.info(f"Workflow ID: {workflow_id}")
+        logger.info(f"Run ID: {workflow_run_id}")
+        logger.info(f"{separator}")
         
         return logger
         
     except Exception as e:
         # Fallback logger
-        logger = logging.getLogger("temporal_fallback")
+        logger = logging.getLogger(f"fallback_{activity_name}")
         if not logger.handlers:
             handler = logging.StreamHandler()
-            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+            formatter = logging.Formatter(f'{activity_name} - %(asctime)s - %(levelname)s - %(message)s')
             handler.setFormatter(formatter)
             logger.addHandler(handler)
             logger.setLevel(logging.INFO)
-        logger.error(f"Failed to create execution logger: {e}")
+        logger.error(f"Failed to create activity logger: {e}")
         return logger
