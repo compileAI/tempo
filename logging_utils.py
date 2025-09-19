@@ -8,8 +8,26 @@ def setup_execution_logger():
     try:
         # Get the unique workflow execution info
         workflow_info = workflow.info()
-        run_id = workflow_info.workflow_execution.run_id
-        workflow_id = workflow_info.workflow_execution.workflow_id
+        
+        # Debug: Print all available attributes
+        print(f"DEBUG: workflow_info type: {type(workflow_info)}")
+        print(f"DEBUG: workflow_info attributes: {dir(workflow_info)}")
+        
+        # Handle different SDK versions
+        if hasattr(workflow_info, 'run_id'):
+            run_id = workflow_info.run_id
+            workflow_id = workflow_info.workflow_id
+        elif hasattr(workflow_info, 'workflow_execution'):
+            run_id = workflow_info.workflow_execution.run_id
+            workflow_id = workflow_info.workflow_execution.workflow_id
+        else:
+            # Try common attribute names from different SDK versions
+            run_id = (getattr(workflow_info, 'run_id', None) or 
+                     getattr(workflow_info, 'workflow_run_id', None) or
+                     'unknown')
+            workflow_id = (getattr(workflow_info, 'workflow_id', None) or
+                          getattr(workflow_info, 'workflow_type', None) or 
+                          'unknown')
         
         # Create unique log file name
         log_dir = "logs"
@@ -54,7 +72,15 @@ def get_activity_logger():
     try:
         # Get activity info to match with workflow
         activity_info = activity.info()
-        workflow_run_id = activity_info.workflow_execution.run_id
+        
+        # Handle different SDK versions
+        if hasattr(activity_info, 'workflow_run_id'):
+            workflow_run_id = activity_info.workflow_run_id
+        elif hasattr(activity_info, 'workflow_execution'):
+            workflow_run_id = activity_info.workflow_execution.run_id
+        else:
+            # Fallback
+            workflow_run_id = getattr(activity_info, 'workflow_run_id', None) or 'unknown'
         
         # Use the same logger name as the workflow
         logger_name = f"temporal_execution_{workflow_run_id}"
