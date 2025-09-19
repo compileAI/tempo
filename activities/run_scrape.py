@@ -1,10 +1,10 @@
 import subprocess
 from temporalio import activity
-from logging_utils import get_activity_logger
+from simple_logging import get_simple_logger
 
 @activity.defn
 async def run_scrape():
-    logger = get_activity_logger()
+    logger = get_simple_logger()
     logger.info("Starting scrape subprocess")
     try:
         result = subprocess.run(["/bin/bash", "/root/compile/scripts/run_scrape.sh"], check=True, capture_output=True, text=True)
