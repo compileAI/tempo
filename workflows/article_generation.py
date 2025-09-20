@@ -53,9 +53,3 @@ class ArticleGenWorkflow:
             start_to_close_timeout=timedelta(hours=2),
             retry_policy=RetryPolicy(maximum_attempts=3)
         )
-        
-        await workflow.execute_activity(
-            run_enhanced_articles,
-            start_to_close_timeout=timedelta(hours=2),
-            retry_policy=RetryPolicy(maximum_attempts=3)
-        )
