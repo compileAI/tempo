@@ -7,7 +7,7 @@ async def run_hlc():
     logger = get_activity_logger("hlc")
     logger.info("Starting Hlc subprocess")
     try:
-        result = subprocess.run(["/bin/bash", "/root/compile/scripts/run_hlc.sh"], check=True, capture_output=True, text=True)
+        result = subprocess.run(["/bin/bash", "/home/compile-dev/compile/scripts/run_hlc.sh"], check=True, capture_output=True, text=True)
         logger.info("Hlc subprocess completed successfully")
         if result.stdout:
             logger.info(f"Hlc output: {result.stdout}")

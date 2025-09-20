@@ -7,7 +7,7 @@ async def run_scrape():
     logger = get_activity_logger("scrape")
     logger.info("Starting scrape subprocess")
     try:
-        result = subprocess.run(["/bin/bash", "/root/compile/scripts/run_scrape.sh"], check=True, capture_output=True, text=True)
+        result = subprocess.run(["/bin/bash", "/home/compile-dev/compile/scripts/run_scrape.sh"], check=True, capture_output=True, text=True)
         logger.info("Scrape subprocess completed successfully")
         if result.stdout:
             logger.info(f"Scrape output: {result.stdout}")

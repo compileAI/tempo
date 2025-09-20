@@ -1,20 +1,25 @@
 from datetime import timedelta
-from temporalio import workflow
 from temporalio.common import RetryPolicy
-
-from activities import run_stagehand
+from temporalio import workflow
+from activities import (
+    run_stagehand, run_scroopy_custom
+)
 
 @workflow.defn
-class StagehandWorkflow:
+class StagehandWorkflow: #THIS IS ACTUALLY THE STAGEHAND WORKFLOW
     @workflow.run
     async def run(self) -> None:
-        # Keep the activity on the dedicated queue so it
-        # can run in the Playwright‑ready container
-        return await workflow.execute_activity(
+        await workflow.execute_activity(
             run_stagehand,
-            start_to_close_timeout=timedelta(minutes=30),
-            task_queue="stagehand-tq",
+            start_to_close_timeout=timedelta(hours=2),
             retry_policy=RetryPolicy(
                 maximum_attempts=3,
-            ),
+            )
+        )
+        await workflow.execute_activity(
+            run_scroopy_custom,
+            start_to_close_timeout=timedelta(hours=2),
+            retry_policy=RetryPolicy(
+                maximum_attempts=3,
+            )
         )

@@ -9,17 +9,16 @@ from .run_enhanced_articles import run_enhanced_articles
 from .run_automations import run_automations
 from .run_hlc import run_hlc
 from .run_stagehand import run_stagehand
+from .run_scroopy_custom import run_scroopy_custom
 
 __all__ = [
     'run_scrape',
-    'run_dspy', 
-    'run_vdb',
     'run_scoop_preprocess',
     'run_scoop_clustering',
     'run_cluster',
     'run_faq_batch',
-    'run_enhanced_articles',
     'run_automations',
     'run_hlc',
     'run_stagehand',
+    'run_scroopy_custom',
 ]

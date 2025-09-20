@@ -7,7 +7,10 @@ async def run_scoop_preprocess():
     logger = get_activity_logger("scoop_preprocess")
     logger.info("Starting scoop preprocess subprocess")
     try:
-        result = subprocess.run(["/bin/bash", "/root/compile/scripts/run_scoop_preprocess.sh"], check=True, capture_output=True, text=True)
+        result = subprocess.run([
+            "/usr/bin/python3", 
+            "scripts/daily_preprocess.py"
+        ], cwd="/home/compile-dev/scoop", check=True, capture_output=True, text=True) 
         logger.info("Scoop preprocess subprocess completed successfully")
         if result.stdout:
             logger.info(f"Scoop preprocess output: {result.stdout}")

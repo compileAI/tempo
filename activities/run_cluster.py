@@ -7,7 +7,7 @@ async def run_cluster():
     logger = get_activity_logger("cluster")
     logger.info("Starting Cluster subprocess")
     try:
-        result = subprocess.run(["/bin/bash", "/root/compile/scripts/run_cluster.sh"], check=True, capture_output=True, text=True)
+        result = subprocess.run(["/bin/bash", "/home/compile-dev/compile/scripts/run_cluster.sh"], check=True, capture_output=True, text=True)
         logger.info("Cluster subprocess completed successfully")
         if result.stdout:
             logger.info(f"Cluster output: {result.stdout}")

@@ -7,7 +7,7 @@ async def run_automations():
     logger = get_activity_logger("automations")
     logger.info("Starting Automations subprocess")
     try:
-        result = subprocess.run(["/bin/bash", "/root/compile/scripts/run_automations.sh"], check=True, capture_output=True, text=True)
+        result = subprocess.run(["/bin/bash", "/home/compile-dev/compile/scripts/run_automations.sh"], check=True, capture_output=True, text=True)
         logger.info("Automations subprocess completed successfully")
         if result.stdout:
             logger.info(f"Automations output: {result.stdout}")

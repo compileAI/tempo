@@ -3,7 +3,7 @@ from temporalio.common import RetryPolicy
 from temporalio import workflow
 from activities import (
     run_scrape, run_scoop_preprocess, run_scoop_clustering,
-    run_cluster, run_faq_batch, run_enhanced_articles,
+    run_cluster, run_faq_batch,
     run_automations, run_hlc
 )
 

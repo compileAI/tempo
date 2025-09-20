@@ -7,7 +7,10 @@ async def run_scoop_clustering():
     logger = get_activity_logger("scoop_clustering")
     logger.info("Starting Scoop Clustering subprocess")
     try:
-        result = subprocess.run(["/bin/bash", "/root/compile/scripts/run_scoop_clustering.sh"], check=True, capture_output=True, text=True)
+        result = subprocess.run([
+            "/usr/bin/python3", 
+            "scripts/daily_clustering.py"
+        ], cwd="/home/compile-dev/scoop", check=True, capture_output=True, text=True) 
         logger.info("Scoop Clustering subprocess completed successfully")
         if result.stdout:
             logger.info(f"Scoop Clustering output: {result.stdout}")
