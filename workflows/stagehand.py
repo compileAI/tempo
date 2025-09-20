@@ -6,7 +6,7 @@ from activities import (
 )
 
 @workflow.defn
-class StagehandWorkflow: #THIS IS ACTUALLY THE STAGEHAND WORKFLOW
+class StagehandWorkflow:
     @workflow.run
     async def run(self) -> None:
         await workflow.execute_activity(
