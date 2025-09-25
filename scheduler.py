@@ -14,7 +14,7 @@ async def main() -> None:
     await client.create_schedule(
         id="daily-article-gen-workflow",
         schedule=Schedule(
-            spec=ScheduleSpec(cron_expressions=["30 */4 * * *"]),
+            spec=ScheduleSpec(cron_expressions=["30 5,17 * * *"]),
             action=ScheduleActionStartWorkflow(
                 workflow=ArticleGenWorkflow,
                 id="article-gen-instance",
@@ -26,7 +26,7 @@ async def main() -> None:
     await client.create_schedule(
         id="daily-stagehand-workflow",
         schedule=Schedule(
-            spec=ScheduleSpec(cron_expressions=["0 4 * * *"]),
+            spec=ScheduleSpec(cron_expressions=["0 5,17 * * *"]),
             action=ScheduleActionStartWorkflow(
                 workflow=StagehandWorkflow,
                 id="stagehand-instance",
