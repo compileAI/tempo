@@ -23,3 +23,5 @@ if you want to re-trigger it (because it failed and needs to be re-run), you can
 to execute an already existing workflow use `temporal workflow execute --workflow-id article-gen-instance-2025-07-25T09:00:00Z --type ArticleGenWorkflow --task-queue default` in the CLI where the workflow id is the workflow id of the already scheduled run
 
 if you need to re-start temporal: `cd ~/docker-compose`, then `docker compose down` to kill it, then `docker-compose up -d` to restart detached. this will run `docker-compose.yml` (I think)
+
+whenever temporal goes down it resets our timezones (I think), so make sure to run `updater.py` to set timezones back to Toronto
