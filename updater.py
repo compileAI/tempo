@@ -1,12 +1,15 @@
 import asyncio
-from temporalio.client import Client, ScheduleSpec
+from temporalio.client import Client, ScheduleSpec, ScheduleUpdate
 
 async def main():
     client = await Client.connect("localhost:7233")
 
     def update_timezone(input):
-        input.description.schedule.spec.time_zone_name = "America/Toronto"
-        return input.description
+        return ScheduleUpdate(
+            schedule=input.description.schedule.with_spec(
+                input.description.schedule.spec.with_time_zone_name("America/Toronto")
+            )
+        )
     
     # update daily article gen workflow
     handle = client.get_schedule_handle("daily-article-gen-workflow")
