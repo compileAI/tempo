@@ -1,7 +1,9 @@
 from .article_generation import ArticleGenWorkflow
-from .stagehand import StagehandWorkflow
+from .scrape import DailyScrapeWorkflow
+from .scrape_unified import DailyScrapeUnifiedWorkflow
 
 __all__ = [
     'ArticleGenWorkflow',
-    'StagehandWorkflow',
+    'DailyScrapeWorkflow',
+    'DailyScrapeUnifiedWorkflow',
 ]
