@@ -24,8 +24,8 @@ async def main():
     handle = client.get_schedule_handle("daily-article-gen-workflow")
     await handle.update(update_timezone)
 
-    # update daily stagehand workflow
-    handle = client.get_schedule_handle("daily-stagehand-workflow")
+    # update daily scrape workflow
+    handle = client.get_schedule_handle("daily-scrape-workflow")
     await handle.update(update_timezone)
 
 if __name__ == "__main__":
