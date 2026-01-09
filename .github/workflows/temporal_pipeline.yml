@@ -1,0 +1,260 @@
+name: Temporal Pipeline Workflow
+
+# This workflow replicates the Temporal workflows from tempo/workflows/scrape.py and tempo/workflows/article_generation.py
+# It runs in the same order: scrape phase first, then article generation phase
+#
+# Setup Required:
+# 1. Add GitHub Secrets in your repository settings:
+#    - SCROOPY_AGENT_ENV: Contents of scroopy_agent/.env file (can be plain text or base64 encoded for multiline)
+#    - SCOOP_ENV: Contents of scoop/.env file (can be plain text or base64 encoded for multiline)
+#    - COMPILE_ENV: Contents of compile/.env file (can be plain text or base64 encoded for multiline)
+# 2. Ensure all three repositories (scroopy_agent, scoop, compile) are in the same GitHub organization/user
+# 3. Adjust the schedule cron expression if needed (default: daily at midnight UTC)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run daily at midnight UTC - adjust as needed
+    - cron: '0 0 * * *'
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120  # 8 hours timeout (matching temporal timeouts)
+
+    steps:
+      # Checkout all three repositories
+      # Uses github.repository_owner to get the organization/user name
+      - name: Checkout scroopy_agent
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/scroopy_agent
+          path: scroopy_agent
+
+      - name: Checkout scoop
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/scoop
+          path: scoop
+
+      - name: Checkout compile
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/compile
+          path: compile
+
+      # Set up Python for scroopy_agent (uses pip)
+      - name: Set up Python for scroopy_agent
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: scroopy_agent/requirements.txt
+
+      # Set up uv for scoop and compile
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      # Install xvfb for headless browser automation (needed for stagehand)
+      - name: Install xvfb and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+
+      # Set up scroopy_agent environment
+      - name: Install scroopy_agent dependencies
+        working-directory: scroopy_agent
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Set up scoop environment
+      - name: Set up scoop Python environment
+        working-directory: scoop
+        run: |
+          uv sync
+
+      # Set up compile environment
+      - name: Set up compile Python environment
+        working-directory: compile
+        run: |
+          uv sync
+
+      # Create .env files from secrets
+      # Note: If secrets contain multiline .env content, they should be base64 encoded
+      # Otherwise, just store the raw .env content in the secret
+      - name: Create scroopy_agent .env file
+        working-directory: scroopy_agent
+        shell: bash
+        run: |
+          if echo "${{ secrets.SCROOPY_AGENT_ENV }}" | base64 -d > .env 2>/dev/null; then
+            echo "Loaded .env from base64 encoded secret"
+          else
+            echo "${{ secrets.SCROOPY_AGENT_ENV }}" > .env
+            echo "Loaded .env from plain text secret"
+          fi
+
+      - name: Create scoop .env file
+        working-directory: scoop
+        shell: bash
+        run: |
+          if echo "${{ secrets.SCOOP_ENV }}" | base64 -d > .env 2>/dev/null; then
+            echo "Loaded .env from base64 encoded secret"
+          else
+            echo "${{ secrets.SCOOP_ENV }}" > .env
+            echo "Loaded .env from plain text secret"
+          fi
+
+      - name: Create compile .env file
+        working-directory: compile
+        shell: bash
+        run: |
+          if echo "${{ secrets.COMPILE_ENV }}" | base64 -d > .env 2>/dev/null; then
+            echo "Loaded .env from base64 encoded secret"
+          else
+            echo "${{ secrets.COMPILE_ENV }}" > .env
+            echo "Loaded .env from plain text secret"
+          fi
+
+      # ============================================
+      # SCRAPE PHASE (matching scrape.py workflow)
+      # ============================================
+      - name: Run Stagehand scraper
+        working-directory: scroopy_agent
+        shell: bash
+        run: |
+          echo "=== Running Stagehand scraper ==="
+          # Load .env file - Python scripts will also load it via python-dotenv
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          xvfb-run -a python src/main/stagehand_main.py
+          echo "✅ Stagehand scraper completed successfully"
+
+      - name: Run Scroopy Custom scraper
+        working-directory: scroopy_agent
+        shell: bash
+        run: |
+          echo "=== Running Custom scraper ==="
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          xvfb-run -a python src/main/custom_main.py
+          echo "✅ Custom scraper completed successfully"
+
+      - name: Run RSS scraper
+        working-directory: scroopy_agent
+        shell: bash
+        run: |
+          echo "=== Running RSS scraper ==="
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          python src/main/rss_main.py
+          echo "✅ RSS scraper completed successfully"
+
+      - name: Run Crawl4AI scraper
+        working-directory: scroopy_agent
+        shell: bash
+        run: |
+          echo "=== Running Crawl4AI scraper ==="
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          python src/main/crawl4ai_main.py
+          echo "✅ Crawl4AI scraper completed successfully"
+
+      # ============================================
+      # ARTICLE GENERATION PHASE (matching article_generation.py workflow)
+      # ============================================
+      - name: Run Scoop Preprocess
+        working-directory: scoop
+        shell: bash
+        run: |
+          echo "=== Running Scoop Preprocess ==="
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          uv run scripts/daily_preprocess.py
+          echo "✅ Scoop Preprocess completed successfully"
+
+      - name: Run Scoop Clustering
+        working-directory: scoop
+        shell: bash
+        run: |
+          echo "=== Running Scoop Clustering ==="
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          uv run scripts/daily_clustering.py
+          echo "✅ Scoop Clustering completed successfully"
+
+      - name: Run Cluster pipeline
+        working-directory: compile
+        shell: bash
+        run: |
+          echo "=== Running Cluster pipeline ==="
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          uv run cds/main/cluster_main.py
+          echo "✅ Cluster pipeline completed successfully"
+
+      - name: Run HLC pipeline
+        working-directory: compile
+        shell: bash
+        run: |
+          echo "=== Running HLC pipeline ==="
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          uv run cds/main/hlc_main.py
+          echo "✅ HLC pipeline completed successfully"
+
+      - name: Run Automations pipeline
+        working-directory: compile
+        shell: bash
+        run: |
+          echo "=== Running Automations pipeline ==="
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          uv run cds/main/automations_main.py --batch
+          echo "✅ Automations pipeline completed successfully"
+
+      - name: Run FAQ Batch pipeline
+        working-directory: compile
+        shell: bash
+        run: |
+          echo "=== Running FAQ Batch pipeline ==="
+          if [ -f .env ]; then
+            set -a
+            export $(grep -v '^#' .env | grep -v '^$' | xargs)
+            set +a
+          fi
+          uv run cds/main/faq_batch_main.py
+          echo "✅ FAQ Batch pipeline completed successfully"
+
+      - name: Pipeline completed
+        run: |
+          echo "🎉 All pipelines completed successfully!"
