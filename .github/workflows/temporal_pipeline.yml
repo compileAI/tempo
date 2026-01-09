@@ -85,7 +85,7 @@ jobs:
         working-directory: scroopy_agent
         run: |
           uv sync
-          playwright install
+          uv run python -m playwright install
 
       # Set up scoop environment
       - name: Set up scoop Python environment
