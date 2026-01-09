@@ -1,4 +1,4 @@
-name: Temporal Pipeline Workflow
+name: Temporal-Equivalent Pipeline Workflow
 
 # This workflow replicates the Temporal workflows from tempo/workflows/scrape.py and tempo/workflows/article_generation.py
 # It runs in the same order: scrape phase first, then article generation phase
@@ -30,18 +30,21 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/scroopy_agent
           path: scroopy_agent
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout scoop
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository_owner }}/scoop
           path: scoop
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout compile
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository_owner }}/compile
           path: compile
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Set up Python for scroopy_agent (uses pip)
       - name: Set up Python for scroopy_agent
