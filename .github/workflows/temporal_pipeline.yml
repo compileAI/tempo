@@ -25,6 +25,26 @@ jobs:
           contents: read  # Required to checkout private repositories
     
     steps:
+      # github actions 'disk' comes pre-loaded with a bunch of software we don't need, 
+      # then we run into space issues when we try to uv sync all the repos. Remove unneeded software here.
+      - name: Maximize Disk Space
+        run: |
+          echo "Disk space before cleanup:"
+          df -h
+          # Remove heavy pre-installed software
+          sudo rm -rf /usr/local/lib/android # ~9 GB
+          sudo rm -rf /usr/share/dotnet      # ~3.4 GB
+          sudo rm -rf /usr/share/swift       # ~3.2 GB
+          sudo rm -rf /usr/local/.ghcup      # ~6.4 GB
+          sudo rm -rf /usr/local/share/powershell # ~1.3 GB
+          sudo rm -rf /opt/hostedtoolcache/CodeQL # ~2 GB
+          
+          # Clean docker images
+          docker image prune -af
+          
+          echo "Disk space after cleanup:"
+          df -h
+
       # Checkout all three repositories
       # Uses github.repository_owner to get the organization/user name
       - name: Checkout scroopy_agent
