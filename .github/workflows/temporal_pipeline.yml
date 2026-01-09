@@ -68,14 +68,6 @@ jobs:
           path: compile
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
 
-      # Set up Python for scroopy_agent (uses pip)
-      - name: Set up Python for scroopy_agent
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-          cache-dependency-path: scroopy_agent/requirements.txt
-
       # Set up uv for scoop and compile
       - name: Install uv
         uses: astral-sh/setup-uv@v4
@@ -92,8 +84,7 @@ jobs:
       - name: Install scroopy_agent dependencies
         working-directory: scroopy_agent
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          uv sync
 
       # Set up scoop environment
       - name: Set up scoop Python environment
@@ -157,7 +148,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          xvfb-run -a python src/main/stagehand_main.py
+          xvfb-run -a uv run python src/main/stagehand_main.py
           echo "✅ Stagehand scraper completed successfully"
 
       - name: Run Scroopy Custom scraper
@@ -170,7 +161,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          xvfb-run -a python src/main/custom_main.py
+          xvfb-run -a uv run python src/main/custom_main.py
           echo "✅ Custom scraper completed successfully"
 
       - name: Run RSS scraper
@@ -183,7 +174,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          python src/main/rss_main.py
+          uv run python src/main/rss_main.py
           echo "✅ RSS scraper completed successfully"
 
       - name: Run Crawl4AI scraper
@@ -196,7 +187,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          python src/main/crawl4ai_main.py
+          uv run python src/main/crawl4ai_main.py
           echo "✅ Crawl4AI scraper completed successfully"
 
       # ============================================
@@ -212,7 +203,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          uv run scripts/daily_preprocess.py
+          uv run python scripts/daily_preprocess.py
           echo "✅ Scoop Preprocess completed successfully"
 
       - name: Run Scoop Clustering
@@ -225,7 +216,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          uv run scripts/daily_clustering.py
+          uv run python scripts/daily_clustering.py
           echo "✅ Scoop Clustering completed successfully"
 
       - name: Run Cluster pipeline
@@ -238,7 +229,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          uv run cds/main/cluster_main.py
+          uv run python cds/main/cluster_main.py
           echo "✅ Cluster pipeline completed successfully"
 
       - name: Run HLC pipeline
@@ -251,7 +242,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          uv run cds/main/hlc_main.py
+          uv run python cds/main/hlc_main.py
           echo "✅ HLC pipeline completed successfully"
 
       - name: Run Automations pipeline
@@ -264,7 +255,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          uv run cds/main/automations_main.py --batch
+          uv run python cds/main/automations_main.py --batch
           echo "✅ Automations pipeline completed successfully"
 
       - name: Run FAQ Batch pipeline
@@ -277,7 +268,7 @@ jobs:
             export $(grep -v '^#' .env | grep -v '^$' | xargs)
             set +a
           fi
-          uv run cds/main/faq_batch_main.py
+          uv run python cds/main/faq_batch_main.py
           echo "✅ FAQ Batch pipeline completed successfully"
 
       - name: Pipeline completed
