@@ -21,7 +21,9 @@ jobs:
   pipeline:
     runs-on: ubuntu-latest
     timeout-minutes: 120  # 8 hours timeout (matching temporal timeouts)
-
+    permissions:
+          contents: read  # Required to checkout private repositories
+    
     steps:
       # Checkout all three repositories
       # Uses github.repository_owner to get the organization/user name
