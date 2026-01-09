@@ -46,7 +46,7 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/compile
           path: compile
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
 
       # Set up Python for scroopy_agent (uses pip)
       - name: Set up Python for scroopy_agent
